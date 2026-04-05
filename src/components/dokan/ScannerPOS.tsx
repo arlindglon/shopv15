@@ -97,6 +97,12 @@ const ScannerPOS: React.FC<Props> = ({ products, customers, settings, onComplete
     );
   }, [customers, customerSearch]);
 
+  // Selected customer (defined early — used in callbacks below)
+  const selectedCustomer = useMemo(() => 
+    customers.find(c => c.id === selectedCustomerId), 
+    [customers, selectedCustomerId]
+  );
+
   // Create new customer from POS
   const handleCreateCustomer = useCallback(async () => {
     if (!newCustomerName.trim()) return;
@@ -205,12 +211,6 @@ const ScannerPOS: React.FC<Props> = ({ products, customers, settings, onComplete
     }
     return cart.length > 0;
   }, [isCustomerRequired, selectedCustomerId, cart.length]);
-
-  // Selected customer
-  const selectedCustomer = useMemo(() => 
-    customers.find(c => c.id === selectedCustomerId), 
-    [customers, selectedCustomerId]
-  );
 
   // Get quantity
   const getQty = (id: string) => cart.find(i => i.productId === id)?.quantity || 0;

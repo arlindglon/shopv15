@@ -238,16 +238,27 @@ function AppContent() {
         fetch('/api/categories'),
       ]);
 
+      // Safe JSON parsing — API routes may return HTML on error
+      const safeJson = async (res: Response) => {
+        try {
+          const text = await res.text();
+          if (!text || text.startsWith('<')) return null;
+          return JSON.parse(text);
+        } catch {
+          return null;
+        }
+      };
+
       const [settingsData, usersData, productsData, customersData, suppliersData, salesData, purchasesData, expensesData, categoriesData] = await Promise.all([
-        settingsRes.json(),
-        usersRes.json(),
-        productsRes.json(),
-        customersRes.json(),
-        suppliersRes.json(),
-        salesRes.json(),
-        purchasesRes.json(),
-        expensesRes.json(),
-        categoriesRes.json(),
+        safeJson(settingsRes),
+        safeJson(usersRes),
+        safeJson(productsRes),
+        safeJson(customersRes),
+        safeJson(suppliersRes),
+        safeJson(salesRes),
+        safeJson(purchasesRes),
+        safeJson(expensesRes),
+        safeJson(categoriesRes),
       ]);
 
       setSettings(settingsData || null);
